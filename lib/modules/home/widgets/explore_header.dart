@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:soltech/modules/home/widgets/points.dart';
 
 import '../../../constants.dart';
-import 'custom_search_diligate.dart';
+import '../../widgets/custom_button.dart';
 
 class ExploreHeader extends StatelessWidget {
   const ExploreHeader({
@@ -37,10 +37,10 @@ class ExploreHeader extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.qr_code),
             color: greenDark,
             onPressed: () {
-              showSearch(context: context, delegate: CustomSearchDelegate());
+              showQR(context);
             },
           ),
         ],
@@ -52,4 +52,19 @@ class ExploreHeader extends StatelessWidget {
     ],
   );
 }
+
+  void showQR(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Name: Tanisha Verma"),
+        content: Image.asset('assets/images/qr.webp', height: 250),
+        actions: [
+          CustomButton('Done', () {
+            Navigator.of(context).pop();
+          }),
+        ],
+      ),
+    );
+  }
 }
