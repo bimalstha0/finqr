@@ -6,7 +6,6 @@ import '../widgets/custom_button.dart';
 
 late List<CameraDescription> _cameras;
 
-
 class QrScannerScreen extends StatefulWidget {
   const QrScannerScreen({Key? key}) : super(key: key);
 
@@ -15,8 +14,18 @@ class QrScannerScreen extends StatefulWidget {
 }
 
 class _QrScannerScreenState extends State<QrScannerScreen> {
-   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeCameras();
+  }
+
+  Future<void> initializeCameras() async {
+    _cameras = await availableCameras();
+  }
 
   @override
   void dispose() {
@@ -27,7 +36,6 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-      // Handle the scanned data here
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Scan successful!")),
       );
@@ -35,58 +43,82 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
       Navigator.pop(context); // Go back to the main screen after scan
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('QR Scanner'),
-        
       ),
-      body: Column(children: [ 
-        Row(children: [SizedBox(), Column(mainAxisAlignment: MainAxisAlignment.center, children: [IconButton(onPressed: (){showQR(context);}, icon: Icon(Icons.qr_code_sharp))])],),
-        Container(
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            QRView(
-        key: qrKey,
-        onQRViewCreated: _onQRViewCreated,
-      ),
-            ElevatedButton(
-              // onPressed: () async {
-                // try {
-                //   var result = await _nativeQr.get();
-                //   setState(() {
-                //     qrString = result;
-                //   });
-                // } catch (err) {
-                //   setState(() {
-                //     qrString = err.toString();
-                //   });
-                // }
-              onPressed: ()  {
-        Navigator.pushNamed(context, '/payment');
-                
-              },
-              child: const Text("Scan"),
+      body: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      showQR(context);
+                    },
+                    icon: Icon(Icons.qr_code_sharp),
+                  ),
+                  Text('Your QR'),
+                ],
+              ),
+            ],
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  height: 50,
+                  child: QRView(
+                    
+                    key: qrKey,
+                    onQRViewCreated: _onQRViewCreated,
+                  ),
+                ),
+                SizedBox(height: 20),
+                CustomButton('Scan', () {
+                    Navigator.pushNamed(context, '/payment');
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-      ),SizedBox(height: 30,),
-      Row(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.center, children: [Text('Powered By'),Image.asset('assets/icons/matera.png',height: 20,)],)
-
-    ]));
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Powered By',
+                style: TextStyle(color: Color.fromARGB(255, 8, 86, 150)),
+              ),
+              Image.asset(
+                'assets/icons/matera.png',
+                height: 50,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
-    void showQR(BuildContext context) {
+  void showQR(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text("Name: Tanisha Verma"),
-        content: Image.asset('assets/images/qr.png',height: 50,),
+        content: Image.asset('assets/images/qr.webp', height: 100),
         actions: [
-          CustomButton('Done', () {Navigator.of(context).pop(); })
+          CustomButton('Done', () {
+            Navigator.of(context).pop();
+          }),
         ],
       ),
     );
