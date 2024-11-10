@@ -111,11 +111,7 @@ class LoginScreen extends StatelessWidget {
                         ))
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/icons')
-                  ],)
+                
               ],
             ),
           ),

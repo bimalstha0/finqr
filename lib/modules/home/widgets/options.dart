@@ -10,7 +10,7 @@ class ButtonRow extends StatelessWidget {
         children: [
           Row(
             children: [
-              buildLargeButton(context, Icons.qr_code, "Scan & Pay", '/scanPay'),
+              buildLargeButton(context, Icons.qr_code_scanner_sharp, "Scan & Pay", '/scanPay'),
               buildLargeButton(context, Icons.money, "Redeem", '/redeem'),
             ],
           ),

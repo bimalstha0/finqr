@@ -107,7 +107,7 @@ class _PinInputScreenState extends State<PinInputScreen> {
                 ),
                 child: Text(
                   buttonText,
-                  style: TextStyle(fontSize: 24),
+                  style: TextStyle(fontSize: 15),
                 ),
               );
             },

@@ -1,4 +1,11 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
+
+import '../widgets/custom_button.dart';
+
+late List<CameraDescription> _cameras;
+
 
 class QrScannerScreen extends StatefulWidget {
   const QrScannerScreen({Key? key}) : super(key: key);
@@ -8,20 +15,44 @@ class QrScannerScreen extends StatefulWidget {
 }
 
 class _QrScannerScreenState extends State<QrScannerScreen> {
-  // final _nativeQr = NativeQr();
-  String? qrString;
+   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  QRViewController? controller;
 
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      // Handle the scanned data here
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Scan successful!")),
+      );
+      controller.pauseCamera();
+      Navigator.pop(context); // Go back to the main screen after scan
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('QR Scanner'),
+        
       ),
-      body: Container(
+      body: Column(children: [ 
+        Row(children: [SizedBox(), Column(mainAxisAlignment: MainAxisAlignment.center, children: [IconButton(onPressed: (){showQR(context);}, icon: Icon(Icons.qr_code_sharp))])],),
+        Container(
         alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            QRView(
+        key: qrKey,
+        onQRViewCreated: _onQRViewCreated,
+      ),
             ElevatedButton(
               // onPressed: () async {
                 // try {
@@ -40,17 +71,23 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
               },
               child: const Text("Scan"),
             ),
-            if (qrString != null) 
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Result: $qrString',
-                  style: TextStyle(fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-              ),
           ],
         ),
+      ),SizedBox(height: 30,),
+      Row(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.center, children: [Text('Powered By'),Image.asset('assets/icons/matera.png',height: 20,)],)
+
+    ]));
+  }
+
+    void showQR(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Name: Tanisha Verma"),
+        content: Image.asset('assets/images/qr.png',height: 50,),
+        actions: [
+          CustomButton('Done', () {Navigator.of(context).pop(); })
+        ],
       ),
     );
   }
